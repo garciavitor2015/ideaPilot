@@ -4,11 +4,11 @@ import { useState, useCallback } from "react";
 import styles from "./IdeaPilot.module.css";
 
 const COLUMNS = [
-  { id: "raw",       label: "💡 Brutas",      color: "#6366f1" },
-  { id: "exploring", label: "🔍 Explorando",  color: "#f59e0b" },
-  { id: "validated", label: "✅ Validadas",    color: "#10b981" },
-  { id: "building",  label: "🚀 Construindo", color: "#3b82f6" },
-  { id: "archived",  label: "📦 Arquivadas",  color: "#6b7280" },
+  { id: "raw",       label: "💡 Brutas",      color: "#5B5BD6" },
+  { id: "exploring", label: "🔍 Explorando",  color: "#C07A2A" },
+  { id: "validated", label: "✅ Validadas",    color: "#3A7D5C" },
+  { id: "building",  label: "🚀 Construindo", color: "#3A6FA8" },
+  { id: "archived",  label: "📦 Arquivadas",  color: "#8A7E6E" },
 ];
 
 const INITIAL_IDEAS = [
@@ -85,8 +85,8 @@ function BoardColumn({ column, ideas, onDragStart, onDrop, onCardClick, dragging
       onDrop={(e) => { setIsOver(false); onDrop(e, column.id); }}
       className={styles.column}
       style={{
-        background: isOver ? "rgba(99,102,241,0.07)" : "rgba(255,255,255,0.02)",
-        border: `1px solid ${isOver ? "rgba(99,102,241,0.4)" : "rgba(255,255,255,0.05)"}`,
+        background: isOver ? "rgba(91,91,214,0.07)" : "rgba(237,231,218,0.8)",
+        border: `1px solid ${isOver ? "rgba(91,91,214,0.35)" : "rgba(160,140,110,0.2)"}`,
       }}
     >
       <div className={styles.columnHeader}>

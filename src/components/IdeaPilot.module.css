@@ -1,55 +1,70 @@
+/* ─── Tokens ──────────────────────────────────────────────────────── */
+:root {
+  --bg:        #F5F0E8;
+  --bg2:       #EDE7DA;
+  --bg3:       #E4DDD0;
+  --card:      #FAF7F2;
+  --border:    rgba(160,140,110,0.2);
+  --border2:   rgba(160,140,110,0.38);
+  --text1:     #2C2820;
+  --text2:     #6B5F50;
+  --text3:     #9C8E7E;
+  --indigo:    #5B5BD6;
+  --indigo-bg: #EEEEFF;
+}
+
 /* ─── App Shell ───────────────────────────────────────────────────── */
 .app {
   min-height: 100vh;
-  background: #080a0f;
+  background: var(--bg);
   font-family: var(--font-sora), sans-serif;
-  color: #f1f5f9;
+  color: var(--text1);
 }
 
 /* ─── Header ─────────────────────────────────────────────────────── */
 .header {
   display: flex;
   align-items: center;
-  height: 60px;
-  padding: 0 32px;
-  gap: 24px;
+  height: 58px;
+  padding: 0 28px;
+  gap: 20px;
   position: sticky;
   top: 0;
-  background: rgba(8, 10, 15, 0.95);
+  background: rgba(250, 247, 242, 0.95);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--border2);
   z-index: 50;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   flex-shrink: 0;
 }
 
 .brandIcon {
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  width: 27px;
+  height: 27px;
+  background: var(--indigo);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .brandName {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #f8fafc;
+  color: var(--text1);
 }
 
 .mvpBadge {
-  font-size: 10px;
-  background: rgba(99, 102, 241, 0.2);
-  color: #818cf8;
+  font-size: 9px;
+  background: var(--indigo-bg);
+  color: var(--indigo);
   border-radius: 4px;
   padding: 2px 6px;
   font-weight: 700;
@@ -57,79 +72,86 @@
 
 .searchWrapper {
   flex: 1;
-  max-width: 320px;
+  max-width: 300px;
   position: relative;
 }
 
 .searchIcon {
   position: absolute;
-  left: 12px;
+  left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #475569;
-  font-size: 13px;
+  color: var(--text3);
+  font-size: 12px;
 }
 
 .searchInput {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 8px 12px 8px 34px;
-  color: #f1f5f9;
-  font-size: 13px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  padding: 7px 11px 7px 30px;
+  color: var(--text1);
+  font-size: 12px;
   outline: none;
   font-family: var(--font-sora), sans-serif;
   transition: border-color 0.15s;
 }
 
+.searchInput::placeholder {
+  color: var(--text3);
+}
+
 .searchInput:focus {
-  border-color: rgba(99, 102, 241, 0.5);
+  border-color: var(--indigo);
 }
 
 .headerActions {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 }
 
 .viewToggle {
   display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
+  background: var(--bg2);
+  border-radius: 9px;
   padding: 3px;
   gap: 2px;
 }
 
 .viewBtn {
-  padding: 6px 14px;
-  border-radius: 8px;
+  padding: 5px 13px;
+  border-radius: 7px;
   border: none;
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
   font-weight: 600;
   font-family: var(--font-sora), sans-serif;
   display: flex;
   align-items: center;
-  gap: 5px;
-  transition: all 0.15s;
+  gap: 4px;
+  transition: all 0.12s;
+  color: var(--text3);
+  background: transparent;
 }
 
 /* ─── Stats Bar ──────────────────────────────────────────────────── */
 .statsBar {
-  padding: 14px 32px;
+  padding: 12px 28px;
   display: flex;
-  gap: 24px;
+  gap: 20px;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
 }
 
 .statItem {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
 }
 
 .statDot {
@@ -140,95 +162,97 @@
 }
 
 .statLabel {
-  font-size: 12px;
-  color: #475569;
+  font-size: 11px;
+  color: var(--text3);
 }
 
 .statCount {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--text2);
   font-family: monospace;
 }
 
 .statTotal {
   margin-left: auto;
-  font-size: 12px;
-  color: #475569;
+  font-size: 11px;
+  color: var(--text3);
 }
 
 .statTotal strong {
-  color: #94a3b8;
+  color: var(--text2);
 }
 
 /* ─── Board ──────────────────────────────────────────────────────── */
 .boardWrapper {
-  padding: 28px 32px;
+  padding: 24px 28px;
   overflow-x: auto;
 }
 
 .board {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   min-width: fit-content;
 }
 
 /* ─── Column ─────────────────────────────────────────────────────── */
 .column {
-  min-width: 240px;
-  max-width: 240px;
-  border-radius: 14px;
-  padding: 16px;
+  min-width: 220px;
+  max-width: 220px;
+  border-radius: 13px;
+  padding: 14px;
   transition: all 0.15s ease;
-  min-height: 400px;
+  min-height: 380px;
 }
 
 .columnHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 7px;
+  margin-bottom: 14px;
 }
 
 .columnDot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .columnLabel {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
-  color: #cbd5e1;
+  color: var(--text2);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .columnCount {
   margin-left: auto;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 1px 8px;
-  font-size: 11px;
-  color: #64748b;
+  padding: 1px 7px;
+  font-size: 10px;
+  color: var(--text3);
   font-family: monospace;
 }
 
 /* ─── Card ───────────────────────────────────────────────────────── */
 .card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  transition: all 0.15s ease;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 12px 14px;
+  margin-bottom: 9px;
+  transition: all 0.12s ease;
   cursor: grab;
   user-select: none;
 }
 
 .card:hover {
-  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--border2);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
   transform: translateY(-1px);
 }
 
@@ -237,16 +261,16 @@
 }
 
 .cardTitle {
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--text1);
   line-height: 1.4;
 }
 
 .cardBody {
-  margin-top: 6px;
-  font-size: 12px;
-  color: #94a3b8;
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--text2);
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -255,21 +279,21 @@
 }
 
 .cardDate {
-  margin-top: 10px;
-  font-size: 11px;
-  color: #475569;
+  margin-top: 9px;
+  font-size: 10px;
+  color: var(--text3);
   font-family: monospace;
 }
 
 /* ─── List ───────────────────────────────────────────────────────── */
 .listWrapper {
-  padding: 28px 32px;
+  padding: 24px 28px;
 }
 
 .listContainer {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 13px;
   overflow: hidden;
 }
 
@@ -277,16 +301,17 @@
   display: grid;
   grid-template-columns: 1fr 160px 100px;
   gap: 16px;
-  padding: 10px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
 }
 
 .listHeaderCell {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  color: #475569;
+  color: var(--text3);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
 }
 
 .listRow {
@@ -294,8 +319,8 @@
   grid-template-columns: 1fr 160px 100px;
   align-items: center;
   gap: 16px;
-  padding: 14px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
   cursor: pointer;
   transition: background 0.1s;
 }
@@ -305,7 +330,7 @@
 }
 
 .listRow:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg2);
 }
 
 .listRowMain {
@@ -313,15 +338,15 @@
 }
 
 .listRowTitle {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--text1);
 }
 
 .listRowBody {
-  margin-top: 3px;
-  font-size: 12px;
-  color: #64748b;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text3);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -330,17 +355,17 @@
 .listRowStatus {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
+  font-size: 11px;
   border-radius: 6px;
-  padding: 3px 10px;
+  padding: 3px 9px;
   width: fit-content;
   white-space: nowrap;
+  font-weight: 600;
 }
 
 .listRowDate {
-  font-size: 11px;
-  color: #475569;
+  font-size: 10px;
+  color: var(--text3);
   font-family: monospace;
   text-align: right;
 }
@@ -348,8 +373,8 @@
 .emptyList {
   padding: 40px;
   text-align: center;
-  color: #475569;
-  font-size: 14px;
+  color: var(--text3);
+  font-size: 13px;
 }
 
 /* ─── Empty State ────────────────────────────────────────────────── */
@@ -359,45 +384,45 @@
   align-items: center;
   justify-content: center;
   padding: 80px 20px;
-  gap: 16px;
+  gap: 14px;
 }
 
 .emptyIcon {
-  font-size: 48px;
+  font-size: 44px;
 }
 
 .emptyText {
-  font-size: 16px;
-  color: #64748b;
+  font-size: 15px;
+  color: var(--text3);
 }
 
 /* ─── Buttons ────────────────────────────────────────────────────── */
 .btnNew {
-  padding: 8px 18px;
-  border-radius: 10px;
+  padding: 7px 16px;
+  border-radius: 9px;
   border: none;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: var(--indigo);
   color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   font-family: var(--font-sora), sans-serif;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   transition: opacity 0.15s;
 }
 
 .btnNew:hover {
-  opacity: 0.9;
+  opacity: 0.88;
 }
 
 /* ─── Modal / Overlay ────────────────────────────────────────────── */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(44, 40, 32, 0.45);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -406,37 +431,37 @@
 }
 
 .modal {
-  background: #0f1117;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card);
+  border: 1px solid var(--border2);
   border-radius: 18px;
-  padding: 32px;
+  padding: 28px;
   width: 100%;
-  max-width: 560px;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+  max-width: 540px;
+  box-shadow: 0 20px 60px rgba(44,40,32,0.18);
 }
 
 .modalTitle {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
-  color: #f8fafc;
-  margin-bottom: 6px;
+  color: var(--text1);
+  margin-bottom: 5px;
 }
 
 .modalSubtitle {
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 24px;
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 20px;
 }
 
 .textarea {
   width: 100%;
-  min-height: 160px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 16px;
-  color: #f1f5f9;
-  font-size: 14px;
+  min-height: 150px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 11px;
+  padding: 14px;
+  color: var(--text1);
+  font-size: 13px;
   font-family: var(--font-sora), sans-serif;
   line-height: 1.6;
   resize: vertical;
@@ -446,37 +471,41 @@
 }
 
 .textarea::placeholder {
-  color: #475569;
+  color: var(--text3);
+}
+
+.textarea:focus {
+  border-color: var(--indigo);
 }
 
 .modalActions {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 9px;
+  margin-top: 18px;
   justify-content: flex-end;
 }
 
 .btnCancel {
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 9px 18px;
+  border-radius: 9px;
+  border: 1px solid var(--border2);
   background: transparent;
-  color: #94a3b8;
-  font-size: 13px;
+  color: var(--text2);
+  font-size: 12px;
   cursor: pointer;
   font-family: var(--font-sora), sans-serif;
-  transition: background 0.15s;
+  transition: background 0.12s;
 }
 
 .btnCancel:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg2);
 }
 
 .btnSave {
-  padding: 10px 24px;
-  border-radius: 10px;
+  padding: 9px 22px;
+  border-radius: 9px;
   border: none;
-  font-size: 13px;
+  font-size: 12px;
   font-family: var(--font-sora), sans-serif;
   font-weight: 600;
   transition: opacity 0.15s;
@@ -491,51 +520,52 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 20px;
-  gap: 16px;
+  margin-bottom: 16px;
+  gap: 14px;
 }
 
 .detailTitle {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--text1);
   line-height: 1.4;
 }
 
 .detailBody {
-  font-size: 14px;
-  color: #94a3b8;
+  font-size: 13px;
+  color: var(--text2);
   line-height: 1.7;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .detailMoveSection {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
 }
 
 .detailMoveLabel {
-  font-size: 12px;
-  color: #475569;
+  font-size: 10px;
+  color: var(--text3);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-  margin-bottom: 12px;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+  margin-bottom: 11px;
 }
 
 .detailMoveButtons {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 7px;
 }
 
 .moveBtn {
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 12px;
+  padding: 5px 13px;
+  border-radius: 7px;
+  font-size: 11px;
   cursor: pointer;
   font-family: var(--font-sora), sans-serif;
-  transition: all 0.15s;
+  transition: all 0.12s;
+  background: transparent;
 }
 
 .moveBtn:hover {
@@ -543,19 +573,19 @@
 }
 
 .btnClose {
-  background: rgba(255, 255, 255, 0.06);
-  border: none;
-  border-radius: 8px;
-  padding: 6px 10px;
-  color: #94a3b8;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 5px 9px;
+  color: var(--text2);
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   flex-shrink: 0;
-  transition: background 0.15s;
+  transition: background 0.12s;
 }
 
 .btnClose:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--bg3);
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────── */
@@ -566,7 +596,7 @@
     height: auto;
     padding-top: 12px;
     padding-bottom: 12px;
-    gap: 12px;
+    gap: 10px;
   }
 
   .searchWrapper {
@@ -576,16 +606,16 @@
   }
 
   .statsBar {
-    padding: 12px 16px;
-    gap: 14px;
+    padding: 10px 16px;
+    gap: 12px;
   }
 
   .boardWrapper {
-    padding: 20px 16px;
+    padding: 18px 16px;
   }
 
   .listWrapper {
-    padding: 20px 16px;
+    padding: 18px 16px;
   }
 
   .statTotal {
