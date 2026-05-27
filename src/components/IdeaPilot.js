@@ -99,36 +99,59 @@ function ListRow({ idea, onClick }) {
 
 // ─── NewIdeaModal ─────────────────────────────────────────────────────────────
 function NewIdeaModal({ onClose, onSave, saving }) {
-  const [text, setText] = useState("");
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const canSave = title.trim() && !saving;
 
   return (
     <div className={styles.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={styles.modal}>
         <h2 className={styles.modalTitle}>Nova ideia</h2>
         <p className={styles.modalSubtitle}>
-          Jogue sua ideia bruta aqui. Sem filtros, sem formato.
+          Jogue sua ideia aqui. Sem filtros, sem formato.
         </p>
-        <textarea
-          autoFocus
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Ex: Um app que transcreve reuniões e já cria tarefas no Notion automaticamente..."
-          className={styles.textarea}
-          onFocus={(e) => (e.target.style.borderColor = "rgba(91,91,214,0.6)")}
-          onBlur={(e) => (e.target.style.borderColor = "rgba(160,140,110,0.38)")}
-        />
+
+        <div className={styles.fieldGroup}>
+          <label className={styles.fieldLabel}>
+            Título <span style={{color:"var(--indigo)"}}>*</span>
+          </label>
+          <input
+            autoFocus
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Ex: App de controle financeiro por voz"
+            className={styles.inputField}
+            onFocus={(e) => (e.target.style.borderColor = "var(--indigo)")}
+            onBlur={(e) => (e.target.style.borderColor = "var(--border2)")}
+          />
+        </div>
+
+        <div className={styles.fieldGroup}>
+          <label className={styles.fieldLabel}>
+            Descrição <span style={{color:"var(--text3)",fontWeight:400}}>(opcional)</span>
+          </label>
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Descreva a ideia, o problema que resolve, como surgiu..."
+            className={styles.textarea}
+            onFocus={(e) => (e.target.style.borderColor = "var(--indigo)")}
+            onBlur={(e) => (e.target.style.borderColor = "var(--border2)")}
+          />
+        </div>
+
         <div className={styles.modalActions}>
           <button onClick={onClose} className={styles.btnCancel}>
             Cancelar
           </button>
           <button
-            onClick={() => text.trim() && onSave(text.trim())}
-            disabled={!text.trim() || saving}
+            onClick={() => canSave && onSave(title.trim(), body.trim())}
+            disabled={!canSave}
             className={styles.btnSave}
             style={{
-              background: text.trim() && !saving ? "var(--indigo)" : "var(--bg3)",
-              color: text.trim() && !saving ? "#fff" : "var(--text3)",
-              cursor: text.trim() && !saving ? "pointer" : "not-allowed",
+              background: canSave ? "var(--indigo)" : "var(--bg3)",
+              color: canSave ? "#fff" : "var(--text3)",
+              cursor: canSave ? "pointer" : "not-allowed",
             }}
           >
             {saving ? "Salvando..." : "Salvar ideia →"}
@@ -228,11 +251,8 @@ export default function IdeaPilot() {
   }, [draggingId]);
 
   // ─── Salvar nova ideia ────────────────────────────────────────────
-  const handleSaveIdea = async (text) => {
+  const handleSaveIdea = async (title, body) => {
     setSaving(true);
-    const lines = text.split("\n").filter(Boolean);
-    const title = lines[0].slice(0, 120);
-    const body = lines.slice(1).join(" ").trim() || "";
 
     const { data, error } = await supabase
       .from("ideas")
