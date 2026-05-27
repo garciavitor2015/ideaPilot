@@ -163,7 +163,9 @@ function NewIdeaModal({ onClose, onSave, saving }) {
 }
 
 // ─── DetailModal ──────────────────────────────────────────────────────────────
-function DetailModal({ idea, onClose, onMove }) {
+function DetailModal({ idea, onClose, onMove, onDelete }) {
+  const [confirming, setConfirming] = useState(false);
+
   return (
     <div className={styles.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={styles.modal}>
@@ -172,6 +174,7 @@ function DetailModal({ idea, onClose, onMove }) {
           <button onClick={onClose} className={styles.btnClose}>✕</button>
         </div>
         <p className={styles.detailBody}>{idea.body || "Sem descrição."}</p>
+
         <div className={styles.detailMoveSection}>
           <p className={styles.detailMoveLabel}>Mover para</p>
           <div className={styles.detailMoveButtons}>
@@ -191,6 +194,29 @@ function DetailModal({ idea, onClose, onMove }) {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className={styles.detailDeleteSection}>
+          {!confirming ? (
+            <button
+              onClick={() => setConfirming(true)}
+              className={styles.btnDelete}
+            >
+              🗑 Excluir ideia
+            </button>
+          ) : (
+            <div className={styles.confirmBox}>
+              <p className={styles.confirmText}>Tem certeza? Esta ação não pode ser desfeita.</p>
+              <div className={styles.confirmActions}>
+                <button onClick={() => setConfirming(false)} className={styles.btnCancelDelete}>
+                  Cancelar
+                </button>
+                <button onClick={() => { onDelete(idea.id); onClose(); }} className={styles.btnConfirmDelete}>
+                  Sim, excluir
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -279,6 +305,18 @@ export default function IdeaPilot() {
       .eq("id", ideaId);
 
     if (error) console.error("Erro ao mover ideia:", error);
+  };
+
+  // ─── Excluir ideia ────────────────────────────────────────────────
+  const handleDelete = async (ideaId) => {
+    setIdeas((prev) => prev.filter((i) => i.id !== ideaId));
+
+    const { error } = await supabase
+      .from("ideas")
+      .delete()
+      .eq("id", ideaId);
+
+    if (error) console.error("Erro ao excluir ideia:", error);
   };
 
   const filtered = ideas.filter(
@@ -422,6 +460,7 @@ export default function IdeaPilot() {
           idea={selectedIdea}
           onClose={() => setSelectedIdea(null)}
           onMove={handleMove}
+          onDelete={handleDelete}
         />
       )}
     </div>
