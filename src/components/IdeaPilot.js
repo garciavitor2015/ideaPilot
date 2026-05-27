@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 import styles from "./IdeaPilot.module.css";
 
 const COLUMNS = [
@@ -9,37 +10,6 @@ const COLUMNS = [
   { id: "validated", label: "✅ Validadas",    color: "#3A7D5C" },
   { id: "building",  label: "🚀 Construindo", color: "#3A6FA8" },
   { id: "archived",  label: "📦 Arquivadas",  color: "#8A7E6E" },
-];
-
-const INITIAL_IDEAS = [
-  {
-    id: "1",
-    title: "App de controle financeiro por voz",
-    body: "Usuário fala o gasto e o app registra automaticamente usando IA de transcrição. Integração com bancos via open finance.",
-    column: "raw",
-    createdAt: new Date("2025-05-20"),
-  },
-  {
-    id: "2",
-    title: "Marketplace de serviços locais",
-    body: "Conectar prestadores de serviço (encanadores, eletricistas) com clientes via geolocalização e avaliações.",
-    column: "exploring",
-    createdAt: new Date("2025-05-18"),
-  },
-  {
-    id: "3",
-    title: "Plataforma de mentorias por assinatura",
-    body: "Mentores especializados disponíveis via assinatura mensal. Sessões rápidas de 30 minutos com especialistas.",
-    column: "validated",
-    createdAt: new Date("2025-05-10"),
-  },
-  {
-    id: "4",
-    title: "IA para análise de contratos",
-    body: "Enviar PDF de contrato e receber análise de riscos, cláusulas problemáticas e sugestões de melhoria.",
-    column: "building",
-    createdAt: new Date("2025-05-01"),
-  },
 ];
 
 function formatDate(date) {
@@ -55,7 +25,7 @@ function generateId() {
 
 // ─── IdeaCard ────────────────────────────────────────────────────────────────
 function IdeaCard({ idea, onDragStart, onClick, isDragging }) {
-  const col = COLUMNS.find((c) => c.id === idea.column);
+  const col = COLUMNS.find((c) => c.id === idea.status);
   return (
     <div
       draggable
@@ -64,12 +34,12 @@ function IdeaCard({ idea, onDragStart, onClick, isDragging }) {
       className={styles.card}
       style={{
         opacity: isDragging ? 0.35 : 1,
-        borderLeft: `3px solid ${col?.color || "#6366f1"}`,
+        borderLeft: `3px solid ${col?.color || "#5B5BD6"}`,
       }}
     >
       <p className={styles.cardTitle}>{idea.title}</p>
       {idea.body && <p className={styles.cardBody}>{idea.body}</p>}
-      <p className={styles.cardDate}>{formatDate(idea.createdAt)}</p>
+      <p className={styles.cardDate}>{formatDate(idea.created_at)}</p>
     </div>
   );
 }
@@ -109,7 +79,7 @@ function BoardColumn({ column, ideas, onDragStart, onDrop, onCardClick, dragging
 
 // ─── ListRow ──────────────────────────────────────────────────────────────────
 function ListRow({ idea, onClick }) {
-  const col = COLUMNS.find((c) => c.id === idea.column);
+  const col = COLUMNS.find((c) => c.id === idea.status);
   return (
     <div onClick={() => onClick(idea)} className={styles.listRow}>
       <div className={styles.listRowMain}>
@@ -122,13 +92,13 @@ function ListRow({ idea, onClick }) {
       >
         {col?.label}
       </span>
-      <span className={styles.listRowDate}>{formatDate(idea.createdAt)}</span>
+      <span className={styles.listRowDate}>{formatDate(idea.created_at)}</span>
     </div>
   );
 }
 
 // ─── NewIdeaModal ─────────────────────────────────────────────────────────────
-function NewIdeaModal({ onClose, onSave }) {
+function NewIdeaModal({ onClose, onSave, saving }) {
   const [text, setText] = useState("");
 
   return (
@@ -144,8 +114,8 @@ function NewIdeaModal({ onClose, onSave }) {
           onChange={(e) => setText(e.target.value)}
           placeholder="Ex: Um app que transcreve reuniões e já cria tarefas no Notion automaticamente..."
           className={styles.textarea}
-          onFocus={(e) => (e.target.style.borderColor = "rgba(99,102,241,0.6)")}
-          onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
+          onFocus={(e) => (e.target.style.borderColor = "rgba(91,91,214,0.6)")}
+          onBlur={(e) => (e.target.style.borderColor = "rgba(160,140,110,0.38)")}
         />
         <div className={styles.modalActions}>
           <button onClick={onClose} className={styles.btnCancel}>
@@ -153,17 +123,15 @@ function NewIdeaModal({ onClose, onSave }) {
           </button>
           <button
             onClick={() => text.trim() && onSave(text.trim())}
-            disabled={!text.trim()}
+            disabled={!text.trim() || saving}
             className={styles.btnSave}
             style={{
-              background: text.trim()
-                ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
-                : "rgba(255,255,255,0.05)",
-              color: text.trim() ? "#fff" : "#475569",
-              cursor: text.trim() ? "pointer" : "not-allowed",
+              background: text.trim() && !saving ? "var(--indigo)" : "var(--bg3)",
+              color: text.trim() && !saving ? "#fff" : "var(--text3)",
+              cursor: text.trim() && !saving ? "pointer" : "not-allowed",
             }}
           >
-            Salvar ideia →
+            {saving ? "Salvando..." : "Salvar ideia →"}
           </button>
         </div>
       </div>
@@ -190,10 +158,10 @@ function DetailModal({ idea, onClose, onMove }) {
                 onClick={() => { onMove(idea.id, c.id); onClose(); }}
                 className={styles.moveBtn}
                 style={{
-                  border: `1px solid ${c.id === idea.column ? c.color : "rgba(255,255,255,0.08)"}`,
-                  background: c.id === idea.column ? `${c.color}20` : "transparent",
-                  color: c.id === idea.column ? c.color : "#94a3b8",
-                  fontWeight: c.id === idea.column ? 700 : 400,
+                  border: `1px solid ${c.id === idea.status ? c.color : "var(--border2)"}`,
+                  background: c.id === idea.status ? `${c.color}18` : "transparent",
+                  color: c.id === idea.status ? c.color : "var(--text2)",
+                  fontWeight: c.id === idea.status ? 700 : 400,
                 }}
               >
                 {c.label}
@@ -208,44 +176,89 @@ function DetailModal({ idea, onClose, onMove }) {
 
 // ─── Main App ─────────────────────────────────────────────────────────────────
 export default function IdeaPilot() {
-  const [ideas, setIdeas] = useState(INITIAL_IDEAS);
+  const [ideas, setIdeas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [view, setView] = useState("board");
   const [showNew, setShowNew] = useState(false);
   const [selectedIdea, setSelectedIdea] = useState(null);
   const [draggingId, setDraggingId] = useState(null);
   const [search, setSearch] = useState("");
 
+  // ─── Carregar ideias do Supabase ──────────────────────────────────
+  useEffect(() => {
+    async function fetchIdeas() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("ideas")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Erro ao carregar ideias:", error);
+      } else {
+        setIdeas(data || []);
+      }
+      setLoading(false);
+    }
+    fetchIdeas();
+  }, []);
+
+  // ─── Drag & Drop ──────────────────────────────────────────────────
   const handleDragStart = useCallback((e, id) => {
     setDraggingId(id);
     e.dataTransfer.effectAllowed = "move";
   }, []);
 
-  const handleDrop = useCallback(
-    (e, columnId) => {
-      e.preventDefault();
-      setIdeas((prev) =>
-        prev.map((i) => (i.id === draggingId ? { ...i, column: columnId } : i))
-      );
-      setDraggingId(null);
-    },
-    [draggingId]
-  );
+  const handleDrop = useCallback(async (e, columnId) => {
+    e.preventDefault();
+    const id = draggingId;
+    setDraggingId(null);
 
-  const handleSaveIdea = (text) => {
+    // Atualiza local imediatamente (otimista)
+    setIdeas((prev) => prev.map((i) => i.id === id ? { ...i, status: columnId } : i));
+
+    // Persiste no banco
+    const { error } = await supabase
+      .from("ideas")
+      .update({ status: columnId })
+      .eq("id", id);
+
+    if (error) console.error("Erro ao mover ideia:", error);
+  }, [draggingId]);
+
+  // ─── Salvar nova ideia ────────────────────────────────────────────
+  const handleSaveIdea = async (text) => {
+    setSaving(true);
     const lines = text.split("\n").filter(Boolean);
-    const title = lines[0].slice(0, 80);
-    const body = lines.slice(1).join(" ").trim() || text.slice(title.length).trim();
-    setIdeas((prev) => [
-      { id: generateId(), title, body, column: "raw", createdAt: new Date() },
-      ...prev,
-    ]);
-    setShowNew(false);
+    const title = lines[0].slice(0, 120);
+    const body = lines.slice(1).join(" ").trim() || "";
+
+    const { data, error } = await supabase
+      .from("ideas")
+      .insert([{ title, body, status: "raw" }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Erro ao salvar ideia:", error);
+    } else {
+      setIdeas((prev) => [data, ...prev]);
+      setShowNew(false);
+    }
+    setSaving(false);
   };
 
-  const handleMove = (ideaId, columnId) => {
-    setIdeas((prev) =>
-      prev.map((i) => (i.id === ideaId ? { ...i, column: columnId } : i))
-    );
+  // ─── Mover ideia (modal) ──────────────────────────────────────────
+  const handleMove = async (ideaId, columnId) => {
+    setIdeas((prev) => prev.map((i) => i.id === ideaId ? { ...i, status: columnId } : i));
+
+    const { error } = await supabase
+      .from("ideas")
+      .update({ status: columnId })
+      .eq("id", ideaId);
+
+    if (error) console.error("Erro ao mover ideia:", error);
   };
 
   const filtered = ideas.filter(
@@ -285,8 +298,9 @@ export default function IdeaPilot() {
                 onClick={() => setView(v.id)}
                 className={styles.viewBtn}
                 style={{
-                  background: view === v.id ? "rgba(99,102,241,0.3)" : "transparent",
-                  color: view === v.id ? "#818cf8" : "#64748b",
+                  background: view === v.id ? "var(--card)" : "transparent",
+                  color: view === v.id ? "var(--indigo)" : "var(--text3)",
+                  boxShadow: view === v.id ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
                 }}
               >
                 {v.icon} {v.label}
@@ -303,7 +317,7 @@ export default function IdeaPilot() {
       {/* Stats Bar */}
       <div className={styles.statsBar}>
         {COLUMNS.map((col) => {
-          const count = ideas.filter((i) => i.column === col.id).length;
+          const count = ideas.filter((i) => i.status === col.id).length;
           return (
             <div key={col.id} className={styles.statItem}>
               <div className={styles.statDot} style={{ background: col.color }} />
@@ -319,15 +333,23 @@ export default function IdeaPilot() {
         </div>
       </div>
 
+      {/* Loading */}
+      {loading && (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>⏳</div>
+          <p className={styles.emptyText}>Carregando ideias...</p>
+        </div>
+      )}
+
       {/* Board View */}
-      {view === "board" && (
+      {!loading && view === "board" && (
         <div className={styles.boardWrapper}>
           <div className={styles.board}>
             {COLUMNS.map((col) => (
               <BoardColumn
                 key={col.id}
                 column={col}
-                ideas={filtered.filter((i) => i.column === col.id)}
+                ideas={filtered.filter((i) => i.status === col.id)}
                 onDragStart={handleDragStart}
                 onDrop={handleDrop}
                 onCardClick={setSelectedIdea}
@@ -339,7 +361,7 @@ export default function IdeaPilot() {
       )}
 
       {/* List View */}
-      {view === "list" && (
+      {!loading && view === "list" && (
         <div className={styles.listWrapper}>
           <div className={styles.listContainer}>
             <div className={styles.listHeader}>
@@ -358,7 +380,7 @@ export default function IdeaPilot() {
       )}
 
       {/* Empty State */}
-      {ideas.length === 0 && (
+      {!loading && ideas.length === 0 && (
         <div className={styles.emptyState}>
           <div className={styles.emptyIcon}>💡</div>
           <p className={styles.emptyText}>Sua primeira ideia está esperando.</p>
@@ -369,7 +391,11 @@ export default function IdeaPilot() {
       )}
 
       {showNew && (
-        <NewIdeaModal onClose={() => setShowNew(false)} onSave={handleSaveIdea} />
+        <NewIdeaModal
+          onClose={() => setShowNew(false)}
+          onSave={handleSaveIdea}
+          saving={saving}
+        />
       )}
       {selectedIdea && (
         <DetailModal
